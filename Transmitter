@@ -1,0 +1,33 @@
+#include <RCSwitch.h>
+RCSwitch mySwitch = RCSwitch();
+const int buttonPin = 4; 
+const int soundPin = 5; 
+bool prevButtonState = HIGH;
+bool prevSoundState = HIGH;
+
+void setup() {
+  mySwitch.enableTransmit(2); 
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(soundPin, INPUT);
+  Serial.begin(9600);
+}
+void loop() {
+  bool buttonState = digitalRead(buttonPin);
+  if (prevButtonState == HIGH && buttonState == LOW) {
+    Serial.println("Кнопка нажата → ВКЛЮЧАЕМ");
+    mySwitch.send(B1000, 4);
+  } else if (prevButtonState == LOW && buttonState == HIGH) {
+    Serial.println("Кнопка отпущена → ВЫКЛЮЧАЕМ");
+    mySwitch.send(B0100, 4);
+  }
+  prevButtonState = buttonState;
+  bool soundState = digitalRead(soundPin);
+  if (prevSoundState == HIGH && soundState == LOW) {
+    Serial.println("Обнаружен звук → ВКЛЮЧАЕМ");
+    mySwitch.send(B1000, 4);
+    delay(2000); 
+    mySwitch.send(B0100, 4);
+    Serial.println("Выключаем после 2 сек");
+  }
+  prevSoundState = soundState;
+}
