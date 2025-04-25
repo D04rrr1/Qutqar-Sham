@@ -1,0 +1,23 @@
+#include <RCSwitch.h>
+RCSwitch mySwitch = RCSwitch();
+const int ledPin = 3;
+void setup() {
+  Serial.begin(9600);
+  pinMode(ledPin, OUTPUT);
+  mySwitch.enableReceive(0);
+}
+void loop() {
+  if (mySwitch.available()) {
+    int value = mySwitch.getReceivedValue();
+    Serial.print("Received: ");
+    Serial.println(value, BIN);
+    if (value == B1000) {
+      digitalWrite(ledPin, HIGH);
+      Serial.println("LED ON");
+    } else if (value == B0100) {
+      digitalWrite(ledPin, LOW);
+      Serial.println(" LED OFF");
+    }
+    mySwitch.resetAvailable();
+  }
+}
